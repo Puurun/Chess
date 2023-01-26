@@ -8,11 +8,21 @@ for(let i=0; i<8; i++){
 }
 
 const canvas = document.getElementById("game_canvas");
+
+
 const ctx = canvas.getContext("2d");
-const start_x = 10;
-const start_y = 10;
-const rect_width = 50;
-const rect_height = 50;
+
+const rect_height = window.innerHeight/11;
+const rect_width = rect_height;
+
+const start_x = rect_height/5;
+const start_y = start_x;
+
+canvas.width = rect_width*8+start_x*2;
+canvas.height = rect_height*8+start_y*2;
+
+document.getElementsByClassName('right_container').height = canvas.height;
+document.getElementsByClassName('left_container').height = canvas.height;
 
 class Sprite {
     constructor(src, ctx){
@@ -138,6 +148,11 @@ function DrawChessPieces(val, cx, cy){
     }
 }
 function InitBoard(){
+    ctx.beginPath();
+    ctx.rect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "#D0B8A8"
+    ctx.fill();
+    ctx.closePath();
     board[0][0] = board[0][7] = 1;
     board[0][1] = board[0][6] = 2;
     board[0][2] = board[0][5] = 3;
@@ -161,10 +176,10 @@ function DrawBoard() {
     board.forEach((row, ridx) =>{
         row.forEach((val, cidx)=>{
             if((ridx+cidx)%2 == 1){
-                ctx.fillStyle = "#f7f5ed";
+                ctx.fillStyle = "#f8ede3";
             }
             else{
-                ctx.fillStyle = "#9bbf9c";
+                ctx.fillStyle = "#85586F";
             }
             let cx = start_x+cidx*rect_width;
             let cy = start_y+ridx*rect_height;
@@ -176,9 +191,10 @@ function DrawBoard() {
         })
     })
 }
+// 시간, 누구 턴인지, 
+InitBoard();
 
 function onUpdate(){
-    InitBoard();
     DrawBoard();
 }
 

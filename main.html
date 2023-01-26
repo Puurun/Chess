@@ -6,11 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess</title>
     <link rel="stylesheet" href="main.css">
+    
 </head>
 <body>
-    <canvas id="game_canvas" width="500" height="500"></canvas>
-    <button onclick="">reset</button>
-    <button onclick="">undo</button>
+    <img class="logo" src="img/logo.jpg">
+
+    <div class="main_area">
+        <div class="left_container">
+            <button class="button-74" onclick="">reset</button>
+            <button class="button-74" onclick="">start</button>
+            <button class="button-74">turn end</button>
+        </div>
+
+        <canvas id="game_canvas"></canvas>
+        
+        <div class="right_container">
+            <div id="black_timer">b_time</div>
+            <div id="white_timer">w_time</div>
+        </div>
+    </div>
+
     <script src="draw.js"></script>
 </body>
 </html>
