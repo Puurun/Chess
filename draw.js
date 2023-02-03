@@ -1,12 +1,3 @@
-
-let board = [];
-for(let i=0; i<8; i++){
-    board[i] = [];
-    for(let j=0; j<8; j++){
-        board[i][j] = 0;
-    }
-}
-
 const canvas = document.getElementById("game_canvas");
 
 
@@ -21,6 +12,57 @@ const start_y = start_x;
 canvas.width = rect_width*8+start_x*2;
 canvas.height = rect_height*8+start_y*2;
 
+let selected = false;
+let can_move_position = [];
+let selected_piece_row = -1;
+let selected_piece_col = -1;
+canvas.addEventListener('click', function(event){
+    let rect = canvas.getBoundingClientRect();
+    let mouse_x = event.clientX - rect.left;
+    let mouse_y = event.clientY - rect.top;
+    
+    let cidx = Math.floor((mouse_x-start_x)/rect_width);
+    let ridx = Math.floor((mouse_y-start_y)/rect_height);
+
+    if(selected){
+        
+    }
+    else{
+        if(getPieceColor(board[ridx][cidx]) == player_turn){
+            can_move_position = [];
+            selected_piece_row = ridx;
+            selected_piece_col = cidx;
+            for(let i=0; i<8; i++){
+                for(let j=0; j<8; j++){
+                    if(CanMove(ridx, cidx, i, j, player_turn) == true){
+                        console.log(i, j);
+                        can_move_position.push([i, j]);
+                        console.log(can_move_position);
+                    }
+                }
+            }
+        }
+        else{
+            // 움직일 수 있다는 표시가 떴다면
+            let move_flag = false;
+            can_move_position.forEach((arr)=>{
+                i=arr[0]; j=arr[1];
+                if(i==ridx && j==cidx){
+                    move_flag = true;
+                }
+            });
+            // 움직여라
+            if(move_flag){
+                MovePiece(selected_piece_row, selected_piece_col, ridx, cidx);
+                can_move_position = [];
+            }
+            // 턴을 바꾼다
+            ChangeTurn();
+        }
+    }
+    onUpdate();
+    // 그쪽을 select 어디 갈 수 있는지 보여주고, 그 중 하나를 클릭 하면 이동
+});
 document.getElementsByClassName('right_container').height = canvas.height;
 document.getElementsByClassName('left_container').height = canvas.height;
 
@@ -43,6 +85,7 @@ class Sprite {
             width, height);
     }
 }
+
 
 chess_pieces = {
     black_rook: {
@@ -106,7 +149,7 @@ chess_pieces = {
         sprite: new Sprite('img/Chess_plt45.svg.png', ctx)
     }
 }
-
+checker_sprite = new Sprite('img/checker.png', ctx);
 function DrawChessPieces(val, cx, cy){
     switch(val){
         case 1:
@@ -147,32 +190,16 @@ function DrawChessPieces(val, cx, cy){
             break;
     }
 }
-function InitBoard(){
+function InitDraw(){
     ctx.beginPath();
     ctx.rect(0,0,canvas.width,canvas.height);
     ctx.fillStyle = "#D0B8A8"
     ctx.fill();
     ctx.closePath();
-    board[0][0] = board[0][7] = 1;
-    board[0][1] = board[0][6] = 2;
-    board[0][2] = board[0][5] = 3;
-    board[0][3] = 4;
-    board[0][4] = 5;
-    for(let i=0; i<8; i++){
-        board[1][i] = 6;
-    }
-
-    board[7][0] = board[7][7] = 7;
-    board[7][1] = board[7][6] = 8;
-    board[7][2] = board[7][5] = 9;
-    board[7][3] = 10;
-    board[7][4] = 11;
-    for(let i=0; i<8; i++){
-        board[6][i] = 12;
-    }
 }
 
 function DrawBoard() {
+    // draw board
     board.forEach((row, ridx) =>{
         row.forEach((val, cidx)=>{
             if((ridx+cidx)%2 == 1){
@@ -190,16 +217,26 @@ function DrawBoard() {
             DrawChessPieces(val,cx ,cy);
         })
     })
+    
+    // draw checker
+    can_move_position.forEach((pos, idx)=>{
+        i = pos[0]; j = pos[1];
+        checker_sprite.DrawImage(j*rect_width+start_x, i*rect_width+start_y, rect_width, rect_height);
+    })
+    
 }
 // 시간, 누구 턴인지, 
-InitBoard();
+InitDraw();
 
 function onUpdate(){
     DrawBoard();
 }
 
-setInterval(() => {
+setTimeout(()=>{
     onUpdate();
-}, 1);
+}, 100);
+
+
+
 
 
