@@ -48,6 +48,7 @@ function HandlePawn(sr, sc, fr, fc, player_turn){
     let moveRow=fr-sr;
     let moveCol=fc-sc;
 
+    console.log(sr, moveCol, moveRow);
     if(player_turn === 'white'){
         if(moveRow==-1 &&
             Math.abs(moveCol)==1 &&
@@ -60,7 +61,7 @@ function HandlePawn(sr, sc, fr, fc, player_turn){
         if(sr==6 &&
             moveCol==0 &&
             moveRow==-2 &&
-            getPieceColor(board[sr-1][sc]) == 0){
+            board[sr-1][sc] == 0){
                 return true;
             }
         if(moveCol==0 && moveRow==-1){
@@ -79,7 +80,7 @@ function HandlePawn(sr, sc, fr, fc, player_turn){
         if(sr==1 &&
             moveCol==0 &&
             moveRow==2 &&
-            getPieceColor(board[sr+1][sc])==0){
+            board[sr+1][sc]==0){
                 return true;
             }
         if(moveCol==0&&moveRow==1){

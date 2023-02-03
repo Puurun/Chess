@@ -35,9 +35,7 @@ canvas.addEventListener('click', function(event){
             for(let i=0; i<8; i++){
                 for(let j=0; j<8; j++){
                     if(CanMove(ridx, cidx, i, j, player_turn) == true){
-                        console.log(i, j);
                         can_move_position.push([i, j]);
-                        console.log(can_move_position);
                     }
                 }
             }
@@ -55,9 +53,10 @@ canvas.addEventListener('click', function(event){
             if(move_flag){
                 MovePiece(selected_piece_row, selected_piece_col, ridx, cidx);
                 can_move_position = [];
+                ChangeTurn();
             }
             // 턴을 바꾼다
-            ChangeTurn();
+            
         }
     }
     onUpdate();
