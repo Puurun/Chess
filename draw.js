@@ -12,7 +12,6 @@ const start_y = start_x;
 canvas.width = rect_width*8+start_x*2;
 canvas.height = rect_height*8+start_y*2;
 
-let selected = false;
 let can_move_position = [];
 let selected_piece_row = -1;
 let selected_piece_col = -1;
@@ -23,42 +22,43 @@ canvas.addEventListener('click', function(event){
     
     let cidx = Math.floor((mouse_x-start_x)/rect_width);
     let ridx = Math.floor((mouse_y-start_y)/rect_height);
-
-    if(selected){
-        
+    // prevent going over/down
+    if(cidx<0) cidx = 0;
+    if(ridx<0) ridx = 0;
+    if(cidx>=8) cidx = 7;
+    if(ridx>=8) cidx = 7;
+    
+    if(getPieceColor(board[ridx][cidx]) == player_turn){
+        can_move_position = [];
+        selected_piece_row = ridx;
+        selected_piece_col = cidx;
+        for(let i=0; i<8; i++){
+            for(let j=0; j<8; j++){
+                if(CanMove(ridx, cidx, i, j, player_turn) == true){
+                    can_move_position.push([i, j]);
+                }
+            }
+        }
     }
     else{
-        if(getPieceColor(board[ridx][cidx]) == player_turn){
+        // 움직일 수 있다는 표시가 떴다면
+        let move_flag = false;
+        can_move_position.forEach((arr)=>{
+            i=arr[0]; j=arr[1];
+            if(i==ridx && j==cidx){
+                move_flag = true;
+            }
+        });
+        // 움직여라
+        if(move_flag){
+            MovePiece(selected_piece_row, selected_piece_col, ridx, cidx);
             can_move_position = [];
-            selected_piece_row = ridx;
-            selected_piece_col = cidx;
-            for(let i=0; i<8; i++){
-                for(let j=0; j<8; j++){
-                    if(CanMove(ridx, cidx, i, j, player_turn) == true){
-                        can_move_position.push([i, j]);
-                    }
-                }
-            }
+            ChangeTurn();
         }
-        else{
-            // 움직일 수 있다는 표시가 떴다면
-            let move_flag = false;
-            can_move_position.forEach((arr)=>{
-                i=arr[0]; j=arr[1];
-                if(i==ridx && j==cidx){
-                    move_flag = true;
-                }
-            });
-            // 움직여라
-            if(move_flag){
-                MovePiece(selected_piece_row, selected_piece_col, ridx, cidx);
-                can_move_position = [];
-                ChangeTurn();
-            }
-            // 턴을 바꾼다
-            
-        }
+        // 턴을 바꾼다
+        
     }
+
     onUpdate();
     // 그쪽을 select 어디 갈 수 있는지 보여주고, 그 중 하나를 클릭 하면 이동
 });
