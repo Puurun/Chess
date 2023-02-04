@@ -259,10 +259,10 @@ function DrawBoard() {
     board.forEach((row, ridx) =>{
         row.forEach((val, cidx)=>{
             if((ridx+cidx)%2 == 1){
-                ctx.fillStyle = "#f8ede3";
+                ctx.fillStyle = "#85586F";
             }
             else{
-                ctx.fillStyle = "#85586F";
+                ctx.fillStyle = "#f8ede3";
             }
             let cx = start_x+cidx*rect_width;
             let cy = start_y+ridx*rect_height;
