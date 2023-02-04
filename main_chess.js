@@ -279,6 +279,7 @@ function HandleKing(sr, sc, fr, fc, player_turn){
     let flag = false;
     if(Math.abs(moveRow)==1&&moveCol==0) flag = true;
     if(Math.abs(moveCol)==1&&moveRow==0) flag = true;
+    if(Math.abs(moveCol)==1&&Math.abs(moveRow)==1) flag = true;
     if(!flag) return false;
     return true;
 }
