@@ -113,7 +113,10 @@ canvas.addEventListener('click', function(event){
             }
             ChangeTurn(); // 턴을 바꾼다     
         }
-        
+        else{
+            can_move_position = []
+            
+        }
         
     }
 
