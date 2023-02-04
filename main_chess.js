@@ -185,6 +185,8 @@ function HandleQueen(sr, sc, fr, fc, player_turn){
     let moveCol=fc-sc;
     let i, j;
     let flag = false;
+
+    // 걍 룩 비숍 복사
     if(moveRow != 0 && Math.abs(moveRow) == Math.abs(moveCol)){
         flag = true;
         if(sr<fr&&sc<fc){//우하향
@@ -316,6 +318,10 @@ function MovePiece(sr, sc, fr, fc){
     board[sr][sc] = 0;
     
     return deathCode;
+}
+
+function isCheckMate(sr, sc, fr, fc){
+    
 }
 
 function ChangeTurn(){

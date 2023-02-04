@@ -9,7 +9,6 @@
     
 </head>
 <body>
-    <img class="logo" src="img/logo.jpg">
 
     <div class="main_area">
         <div class="left_container">
@@ -21,8 +20,18 @@
         <canvas id="game_canvas"></canvas>
         
         <div class="right_container">
-            <div id="black_timer">b_time</div>
-            <div id="white_timer">w_time</div>
+            <img class="logo" src="img/logo.jpg">
+        </div>
+    </div>
+    <br>
+    <div class="bottom_container">
+        <div id="white_timer">
+            <img src="img/bunny.png" class="bunny_img">
+            <div id="white_time" class="time_text"></div>
+        </div>
+        <div id="black_timer">
+            <div id="black_time" class="time_text"></div>
+            <img src="img/bunny.png" class="bunny_img">
         </div>
     </div>
     <script src="main_chess.js"></script>

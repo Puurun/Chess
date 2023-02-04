@@ -12,9 +12,59 @@ const start_y = start_x;
 canvas.width = rect_width*8+start_x*2;
 canvas.height = rect_height*8+start_y*2;
 
+let black_time = 3000;
+let white_time = 3000;
 let can_move_position = [];
 let selected_piece_row = -1;
 let selected_piece_col = -1;
+let last_time = Date.now();
+
+let black_min = Math.floor(black_time/60).toLocaleString(undefined, {
+    minimumIntegerDigits: 2,
+    useGrouping: false
+  });
+let black_sec = (black_time%60).toLocaleString(undefined, {
+    minimumIntegerDigits: 2,
+    useGrouping: false
+  });
+let white_min = Math.floor(white_time/60).toLocaleString(undefined, {
+minimumIntegerDigits: 2,
+useGrouping: false
+});
+let white_sec = (white_time%60).toLocaleString(undefined, {
+    minimumIntegerDigits: 2,
+    useGrouping: false
+  });
+document.getElementById("white_time").innerText = `${white_min}:${white_sec}`;
+document.getElementById("black_time").innerText = `${black_min}:${black_sec}`;
+setInterval(()=>{
+    let cur_time = Date.now();
+    if(player_turn == 'black'){
+        let display_time = black_time - Math.round((cur_time-last_time)/1000);
+        black_min = Math.floor(display_time/60).toLocaleString(undefined, {
+            minimumIntegerDigits: 2,
+            useGrouping: false
+          });
+        black_sec = (display_time%60).toLocaleString(undefined, {
+            minimumIntegerDigits: 2,
+            useGrouping: false
+          });
+        document.getElementById("black_time").innerText = `${black_min}:${black_sec}`;
+    }
+    else{
+        let display_time = white_time - Math.round((cur_time-last_time)/1000);
+        white_min = Math.floor(display_time/60).toLocaleString(undefined, {
+            minimumIntegerDigits: 2,
+            useGrouping: false
+            });
+        white_sec = (display_time%60).toLocaleString(undefined, {
+            minimumIntegerDigits: 2,
+            useGrouping: false
+            });
+        document.getElementById("white_time").innerText = `${white_min}:${white_sec}`;
+    }
+}, 100);
+
 canvas.addEventListener('click', function(event){
     let rect = canvas.getBoundingClientRect();
     let mouse_x = event.clientX - rect.left;
@@ -53,14 +103,21 @@ canvas.addEventListener('click', function(event){
         if(move_flag){
             MovePiece(selected_piece_row, selected_piece_col, ridx, cidx);
             can_move_position = [];
-            ChangeTurn();
+            if(player_turn == 'white'){
+                white_time = white_time - Math.round((Date.now()-last_time)/1000);
+                last_time=Date.now();
+            }
+            else{
+                black_time = black_time - Math.round((Date.now()-last_time)/1000);
+                last_time=Date.now();
+            }
+            ChangeTurn(); // 턴을 바꾼다     
         }
-        // 턴을 바꾼다
+        
         
     }
 
     onUpdate();
-    // 그쪽을 select 어디 갈 수 있는지 보여주고, 그 중 하나를 클릭 하면 이동
 });
 document.getElementsByClassName('right_container').height = canvas.height;
 document.getElementsByClassName('left_container').height = canvas.height;
@@ -218,9 +275,10 @@ function DrawBoard() {
     })
     
     // draw checker
+    let checker_size = rect_width;
     can_move_position.forEach((pos, idx)=>{
         i = pos[0]; j = pos[1];
-        checker_sprite.DrawImage(j*rect_width+start_x, i*rect_width+start_y, rect_width, rect_height);
+        checker_sprite.DrawImage(j*rect_width+start_x, i*rect_width+start_y, checker_size, checker_size);
     })
     
 }

@@ -5,17 +5,19 @@ body {
 }
 .logo{
     object-fit: contain;
-    height: 10vh;
-    width: 70vw;
-    background-color: white;
-    margin-left: auto;
+    height: 13vh;
+    margin-left: 2vw;
     margin-right: auto;
+    
 }
+
 #game_canvas{
     padding-left: 0;
     padding-right: 0;
     margin-left: auto;
     margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .left_container{
@@ -24,43 +26,66 @@ body {
     padding-bottom: 0;
     padding-left: 2vw;
     padding-right: 2vw;
-    background-color: darkgoldenrod;
-    margin-left: auto;
     display: flex;
     flex-direction: column;
 }
 
 .right_container{
     width: 10vw;
-    background-color: darkgoldenrod;
+
     padding-left: 2vw;
     padding-right: 2vw;
-    margin-right: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+}
+
+.bottom_container{
+    margin-left: auto;
+    margin-right: auto;
+    background-color: transparent;
+    width: 87vw;
+    justify-content: space-between;
+    display: flex;
+}
+
+.bunny_img{
+    object-fit: contain;
+    width: 10vw;
+    height: 10vh;
 }
 
 #black_timer {
-    background-color: #fff;
+    background-color: transparent;
     padding: 1vh 1vw 1vh 1vw;
     margin: 1vh 1vw 1vh 1vw;
+    display: flex;
+    flex-direction: row;
+    align-items: end;
 }
 
 #white_timer {
-    background-color: #fff;
+    background-color: transparent;
     padding: 1vh 1vw 1vh 1vw;
     margin: 1vh 1vw 1vh 1vw;
+    display: flex;
+    flex-direction: row;
+    align-items: end;
 }
 
+.time_text{
+    font-size: 3vw;
+    font-family:'Courier New', Courier, monospace;
+    font-weight: 600;
+}
 .main_area{
+    margin-top: 5vh;
     padding-left: 0;
     padding-right: 0;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: auto;
     display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 /* CSS */
