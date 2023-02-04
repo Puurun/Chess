@@ -126,6 +126,13 @@ function HandleRook(sr, sc, fr, fc, player_turn){
                 }
             }
         }
+        else{
+            for(let i=sc-1;i>fc;i--){
+                if(board[sr][i] != 0) {
+                    return false;
+                }
+            }
+        }
     }
 
     if(!flag){
@@ -248,6 +255,13 @@ function HandleQueen(sr, sc, fr, fc, player_turn){
             }
             for(let i=sc-1; i>fc; i--){
                 if(board[sr][i] != 0){
+                    return false;
+                }
+            }
+        }
+        else{
+            for(let i=sc-1;i>fc;i--){
+                if(board[sr][i] != 0) {
                     return false;
                 }
             }
