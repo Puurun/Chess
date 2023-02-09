@@ -209,6 +209,7 @@ chess_pieces = {
     }
 }
 checker_sprite = new Sprite('img/checker.png', ctx);
+
 function DrawChessPieces(val, cx, cy){
     switch(val){
         case 1:
@@ -283,6 +284,16 @@ function DrawBoard() {
         i = pos[0]; j = pos[1];
         checker_sprite.DrawImage(j*rect_width+start_x, i*rect_width+start_y, checker_size, checker_size);
     })
+    
+    // draw turn indicator bunnies
+    if(player_turn == 'white'){
+        document.getElementById('wh_bunny').src = "img/wh_bunny_turn.png";
+        document.getElementById('bl_bunny').src = "img/bl_bunny.png";
+    }
+    else{
+        document.getElementById('wh_bunny').src = "img/wh_bunny.png";
+        document.getElementById('bl_bunny').src = "img/bl_bunny_turn.png";
+    }
     
 }
 // 시간, 누구 턴인지, 

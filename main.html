@@ -12,26 +12,30 @@
 
     <div class="main_area">
         <div class="left_container">
-            <button class="button-74" onclick="">reset</button>
-            <button class="button-74" onclick="">start</button>
-            <button class="button-74">turn end</button>
+            <button class="button-74" onclick="">
+                <img src="img/chess icon_reset.png" class="bt_img">
+            </button>
+            <br><br><br>
+            <button class="button-74" onclick="">
+                <img src="img/chess icon_undo.png" class="bt_img">
+            </button>
         </div>
 
         <canvas id="game_canvas"></canvas>
         
         <div class="right_container">
-            <img class="logo" src="img/logo.jpg">
+            <img class="logo" src="img/chess_logo.png">
         </div>
     </div>
     <br>
     <div class="bottom_container">
-        <div id="white_timer">
-            <img src="img/bunny.png" class="bunny_img">
+        <div id="black_timer">
+            <img src="img/bunny.png" class="bunny_img" id="wh_bunny">
             <div id="white_time" class="time_text"></div>
         </div>
-        <div id="black_timer">
+        <div id="white_timer">
             <div id="black_time" class="time_text"></div>
-            <img src="img/bunny.png" class="bunny_img">
+            <img src="img/bunny.png" class="bunny_img" id="bl_bunny">
         </div>
     </div>
     <script src="main_chess.js"></script>
