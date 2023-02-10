@@ -339,6 +339,10 @@ function isCheckMate(sr, sc, fr, fc){
     
 }
 
+function isCheckMate(sr,sc,fr,fc){
+
+}
+
 function ChangeTurn(){
     if(player_turn == 'white'){
         player_turn = 'black';
