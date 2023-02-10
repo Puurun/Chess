@@ -5,6 +5,7 @@ let board_copy;
 let white_death = [];
 let black_death = [];
 
+
 Array.prototype.clone = function() {
     var arr = this.slice(0);
     for( var i = 0; i < this.length; i++ ) {
@@ -16,14 +17,34 @@ Array.prototype.clone = function() {
     return arr;
 }
 
-for(let i=0; i<8; i++){
-    board[i] = [];
-    for(let j=0; j<8; j++){
-        board[i][j] = 0;
-    }
-}
-
 function InitBoard(){
+    black_time = 3000;
+    white_time = 3000;
+    let black_min = Math.floor(black_time/60).toLocaleString(undefined, {
+        minimumIntegerDigits: 2,
+        useGrouping: false
+      });
+    let black_sec = (black_time%60).toLocaleString(undefined, {
+        minimumIntegerDigits: 2,
+        useGrouping: false
+      });
+    let white_min = Math.floor(white_time/60).toLocaleString(undefined, {
+    minimumIntegerDigits: 2,
+    useGrouping: false
+    });
+    let white_sec = (white_time%60).toLocaleString(undefined, {
+        minimumIntegerDigits: 2,
+        useGrouping: false
+      });
+    document.getElementById("white_time").innerText = `${white_min}:${white_sec}`;
+    document.getElementById("black_time").innerText = `${black_min}:${black_sec}`;
+    
+    for(let i=0; i<8; i++){
+        board[i] = [];
+        for(let j=0; j<8; j++){
+            board[i][j] = 0;
+        }
+    }
     board[0][0] = board[0][7] = 1;
     board[0][1] = board[0][6] = 2;
     board[0][2] = board[0][5] = 3;
@@ -431,5 +452,10 @@ function GameStart(){
     player_turn = 'white';
 }
 
+function ResetGame(){
+    GameStart();
+    InitBoard();
+    onUpdate();
+}
 InitBoard();
 GameStart();
