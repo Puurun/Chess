@@ -82,12 +82,17 @@ canvas.addEventListener('click', function(event){
         can_move_position = [];
         selected_piece_row = ridx;
         selected_piece_col = cidx;
+        let checking;
         for(let i=0; i<8; i++){
             for(let j=0; j<8; j++){
-                if(CanMove(ridx, cidx, i, j, player_turn) == true){
-                    can_move_position.push([i, j]);
+                if(CanMove(board, ridx, cidx, i, j, player_turn) == true){
+                    checking = isCheck(ridx, cidx, i, j)
+                    if(checking>=1) can_move_position.push([i, j]);
                 }
             }
+        }
+        if(checking==1&&isFinish()){
+            alert("CheckMate");
         }
     }
     else{
@@ -101,7 +106,7 @@ canvas.addEventListener('click', function(event){
         });
         // 움직여라
         if(move_flag){
-            MovePiece(selected_piece_row, selected_piece_col, ridx, cidx);
+            var death = MovePiece(board, selected_piece_row, selected_piece_col, ridx, cidx);
             can_move_position = [];
             if(player_turn == 'white'){
                 white_time = white_time - Math.round((Date.now()-last_time)/1000);
@@ -111,6 +116,12 @@ canvas.addEventListener('click', function(event){
                 black_time = black_time - Math.round((Date.now()-last_time)/1000);
                 last_time=Date.now();
             }
+
+            if(death != 0){
+                if(player_turn == 'white') black_death.push(death);
+                if(player_turn == 'black') white_death.push(death);
+            }
+
             ChangeTurn(); // 턴을 바꾼다     
         }
         else{

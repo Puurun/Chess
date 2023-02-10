@@ -1,6 +1,20 @@
 
 let player_turn = '';
 let board = [];
+let board_copy;
+let white_death = [];
+let black_death = [];
+
+Array.prototype.clone = function() {
+    var arr = this.slice(0);
+    for( var i = 0; i < this.length; i++ ) {
+        if( this[i].clone ) {
+            //recursion
+            arr[i] = this[i].clone();
+        }
+    }
+    return arr;
+}
 
 for(let i=0; i<8; i++){
     board[i] = [];
@@ -27,11 +41,8 @@ function InitBoard(){
     for(let i=0; i<8; i++){
         board[6][i] = 12;
     }
-}
-
-
-function GetCommand(){
-    
+    white_death = [];
+    black_death = [];
 }
 
 function getPieceColor(piece){
@@ -285,7 +296,7 @@ function HandleKing(sr, sc, fr, fc, player_turn){
 }
 
 
-function CanMove(sr, sc, fr, fc, player_turn){
+function CanMove(board, sr, sc, fr, fc, player_turn){
     if(sc <0||sr>=8||sc<0||sc>=8||fr<0||fr>=8||fc<0||fc>=8){
         return false;
     }
@@ -323,7 +334,7 @@ function CanMove(sr, sc, fr, fc, player_turn){
 }
 
 // moves piece, and returns death piece code if dead
-function MovePiece(sr, sc, fr, fc){
+function MovePiece(board, sr, sc, fr, fc){
     let deathCode = 0;
 
     if(getPieceColor(board[fr][fc]) != 0){
@@ -335,13 +346,78 @@ function MovePiece(sr, sc, fr, fc){
     return deathCode;
 }
 
-function isCheckMate(sr, sc, fr, fc){
-    
+
+function isFinish(){
+    let dir = [[-1, 1], [-1, 0], [-1, 1], 
+                [0, 1], [0, -1], 
+                [1, 1], [1, 0], [1, -1]];
+    let fin = false;
+    let krow, kcol;
+    for(let i=0; i<8; i++){
+        for(let j=0; j<8; j++){
+            if(board[i][j]%6 == 5){
+                if(getPieceColor(board[i][j]) == player_turn){
+                    krow=i;
+                    kcol=j;
+                }
+            }
+        }
+    }
+
+    for(let i=0; i<8; i++){
+        let newRow=krow+dir[i][0];
+        let newCol=kcol+dir[i][1];
+        if(CanMove(board, krow, kcol, newRow, newCol, player_turn)
+        && isCheck(board, krow, kcol, newRow, newCol)!=0){
+            flag = true;
+            break;
+        }
+    }
+    return flag;
+}
+function isCheck(sr, sc, fr, fc){
+    let flag = 2;
+    board_copy = board.clone();
+
+    let tmp = MovePiece(board_copy, sr, sc, fr, fc);
+    let kwr, kwc, kbr, kbc;
+    if(tmp%6 == 5) flag=3;
+    if(flag != 3){
+        // check king location
+        for(let i=0; i<8; i++){
+            for(let j=0; j<8; j++){
+                // check if piece is king
+                if(board_copy[i][j]%6 == 5){
+                    if(getPieceColor(board_copy[i][j]) == 'white'){
+                        kwr=i;
+                        kwc=j;
+                    }
+                    else{
+                        kbr=i;
+                        kbc=j;
+                    }
+                }
+            }
+        }
+        for(let i=0; i<8; i++){
+            for(let j=0; j<8; j++){
+                if(getPieceColor(board_copy[i][j]) == 'white' &&
+                   CanMove(board_copy, i, j, kbr, kbc, 'white')){
+                    if(player_turn=='white') flag = 1;
+                    else flag = 0;
+                }
+                if(getPieceColor(board_copy[i][j]) == 'black' &&
+                   CanMove(board_copy, i, j, kwr, kwc, 'black')){
+                    if(player_turn=='black') flag=1;
+                    else flag = 0;
+                }
+            }
+        }
+    }
+
+    return flag;
 }
 
-function isCheckMate(sr,sc,fr,fc){
-
-}
 
 function ChangeTurn(){
     if(player_turn == 'white'){
