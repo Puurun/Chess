@@ -83,14 +83,8 @@ canvas.addEventListener('click', function(event){
         selected_piece_row = ridx;
         selected_piece_col = cidx;
         let checking;
-        for(let i=0; i<8; i++){
-            for(let j=0; j<8; j++){
-                if(CanMove(board, ridx, cidx, i, j, player_turn) == true){
-                    checking = isCheck(ridx, cidx, i, j)
-                    if(checking>=1) can_move_position.push([i, j]);
-                }
-            }
-        }
+        can_move_position = getMoveablePosition(ridx, cidx, player_turn);
+
         if(checking==1&&isFinish()){
             alert("CheckMate");
         }
@@ -122,11 +116,14 @@ canvas.addEventListener('click', function(event){
                 if(player_turn == 'black') white_death.push(death);
             }
 
+            if(isFinish()){
+                alert('checkmate');
+            }
+ 
             ChangeTurn(); // 턴을 바꾼다     
         }
         else{
             can_move_position = []
-            
         }
         
     }
@@ -161,103 +158,105 @@ chess_pieces = {
     black_rook: {
         id: 1,
         src: 'img/Chess_rdt45.svg.png',
-        sprite: new Sprite('img/Chess_rdt45.svg.png', ctx)
+        sprite: new Sprite('img/rook_b.png', ctx)
     },
     black_knight: {
         id: 2,
         src: 'img/Chess_ndt45.svg.png',
-        sprite: new Sprite('img/Chess_ndt45.svg.png', ctx)
+        sprite: new Sprite('img/knight_b.png', ctx)
     },
     black_bishop: {
         id: 3,
         src: 'img/Chess_bdt45.svg.png',
-        sprite: new Sprite('img/Chess_bdt45.svg.png', ctx)
+        sprite: new Sprite('img/bishop_b.png', ctx)
     },
     black_queen: {
         id: 4,
         src: 'img/Chess_qdt45.svg.png',
-        sprite: new Sprite('img/Chess_qdt45.svg.png', ctx)
+        sprite: new Sprite('img/queen_b.png', ctx)
     },
     black_king: {
         id: 5,
         src: 'img/Chess_kdt45.svg.png',
-        sprite: new Sprite('img/Chess_kdt45.svg.png', ctx)
+        sprite: new Sprite('img/king_b.png', ctx)
     },
     black_pawn:{
         id: 6,
         src: 'img/Chess_pdt45.svg.png',
-        sprite: new Sprite('img/Chess_pdt45.svg.png', ctx)
+        sprite: new Sprite('img/pawn_b.png', ctx)
     },
     white_rook: {
         id: 7,
         src: 'img/Chess_rlt45.svg.png',
-        sprite: new Sprite('img/Chess_rlt45.svg.png', ctx)
+        sprite: new Sprite('img/rook_w.png', ctx)
     },
     white_knight: {
         id: 8,
         src: 'img/Chess_nlt45.svg.png',
-        sprite: new Sprite('img/Chess_nlt45.svg.png', ctx)
+        sprite: new Sprite('img/knight_w.png', ctx)
     },
     white_bishop: {
         id: 9,
         src: 'img/Chess_blt45.svg.png',
-        sprite: new Sprite('img/Chess_blt45.svg.png', ctx)
+        sprite: new Sprite('img/bishop_w.png', ctx)
     },
     white_queen: {
         id: 10,
         src: 'img/Chess_qlt45.svg.png',
-        sprite: new Sprite('img/Chess_qlt45.svg.png', ctx)
+        sprite: new Sprite('img/queen_w.png', ctx)
     },
     white_king: {
         id: 11,
         src: 'img/Chess_klt45.svg.png',
-        sprite: new Sprite('img/Chess_klt45.svg.png', ctx)
+        sprite: new Sprite('img/king_w.png', ctx)
     },
     white_pawn: {
         id: 12,
         src: 'img/Chess_plt45.svg.png',
-        sprite: new Sprite('img/Chess_plt45.svg.png', ctx)
+        sprite: new Sprite('img/pawn_w.png', ctx)
     }
 }
 checker_sprite = new Sprite('img/checker.png', ctx);
 
 function DrawChessPieces(val, cx, cy){
+    let w = rect_width;
+    let h = rect_height;
     switch(val){
         case 1:
-            chess_pieces.black_rook.sprite.DrawImage(cx, cy, rect_width, rect_height);  
+            chess_pieces.black_rook.sprite.DrawImage(cx, cy, w, h);  
             break;
         case 2:
-            chess_pieces.black_knight.sprite.DrawImage(cx, cy, rect_width, rect_height);  
+            chess_pieces.black_knight.sprite.DrawImage(cx, cy, w, h);  
             break;
         case 3:
-            chess_pieces.black_bishop.sprite.DrawImage(cx, cy, rect_width, rect_height);  
+            chess_pieces.black_bishop.sprite.DrawImage(cx, cy, w, h);  
             break;
         case 4:
-            chess_pieces.black_queen.sprite.DrawImage(cx, cy, rect_width, rect_height);  
+            chess_pieces.black_queen.sprite.DrawImage(cx, cy, w, h);  
             break;
         case 5:
-            chess_pieces.black_king.sprite.DrawImage(cx, cy, rect_width, rect_height);  
+            chess_pieces.black_king.sprite.DrawImage(cx, cy, w, h);  
             break;
         case 6:
-            chess_pieces.black_pawn.sprite.DrawImage(cx, cy, rect_width, rect_height);  
+            chess_pieces.black_pawn.sprite.DrawImage(cx, cy, w, h);  
             break;
         case 7:
-            chess_pieces.white_rook.sprite.DrawImage(cx, cy, rect_width, rect_height);  
+            chess_pieces.white_rook.sprite.DrawImage(cx, cy, w, h);  
             break;
         case 8:
-            chess_pieces.white_knight.sprite.DrawImage(cx, cy, rect_width, rect_height);  
+            chess_pieces.white_knight.sprite.DrawImage(cx, cy, w, h);  
             break;
         case 9:
-            chess_pieces.white_bishop.sprite.DrawImage(cx, cy, rect_width, rect_height);  
+            chess_pieces.white_bishop.sprite.DrawImage(cx, cy, w, h);  
             break;
         case 10:
-            chess_pieces.white_queen.sprite.DrawImage(cx, cy, rect_width, rect_height);  
+            chess_pieces.white_queen.sprite.DrawImage(cx, cy, w, h);  
             break;
         case 11:
-            chess_pieces.white_king.sprite.DrawImage(cx, cy, rect_width, rect_height);  
+            chess_pieces.white_king.sprite.DrawImage(cx, cy, w, h);  
             break;
         case 12:
-            chess_pieces.white_pawn.sprite.DrawImage(cx, cy, rect_width, rect_height);  
+            chess_pieces.white_pawn.sprite.DrawImage(cx, cy, w, h);  
             break;
     }
 }

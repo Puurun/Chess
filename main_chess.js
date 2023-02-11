@@ -4,7 +4,8 @@ let board = [];
 let board_copy;
 let white_death = [];
 let black_death = [];
-
+let black_check;
+let white_check;
 
 Array.prototype.clone = function() {
     var arr = this.slice(0);
@@ -20,6 +21,8 @@ Array.prototype.clone = function() {
 function InitBoard(){
     black_time = 3000;
     white_time = 3000;
+    black_check = false;
+    white_check = false;
     let black_min = Math.floor(black_time/60).toLocaleString(undefined, {
         minimumIntegerDigits: 2,
         useGrouping: false
@@ -76,7 +79,7 @@ function getPieceColor(piece){
     return 'nothing';
 }
 
-function HandlePawn(sr, sc, fr, fc, player_turn){
+function HandlePawn(board, sr, sc, fr, fc, player_turn){
     let moveRow=fr-sr;
     let moveCol=fc-sc;
 
@@ -121,7 +124,7 @@ function HandlePawn(sr, sc, fr, fc, player_turn){
     return false;
 }
 
-function HandleRook(sr, sc, fr, fc, player_turn){
+function HandleRook(board, sr, sc, fr, fc, player_turn){
     let moveRow=fr-sr;
     let moveCol=fc-sc;
     let flag = false;
@@ -172,7 +175,7 @@ function HandleRook(sr, sc, fr, fc, player_turn){
     }
     return true;
 }
-function HandleKnight(sr, sc, fr, fc, player_turn){
+function HandleKnight(board, sr, sc, fr, fc, player_turn){
     let moveRow=fr-sr;
     let moveCol=fc-sc;
     let flag = false;
@@ -180,7 +183,7 @@ function HandleKnight(sr, sc, fr, fc, player_turn){
     if(Math.abs(moveRow)==1 && Math.abs(moveCol)==2) flag = true;
     return flag;
 }
-function HandleBishop(sr, sc, fr, fc, player_turn){
+function HandleBishop(board, sr, sc, fr, fc, player_turn){
     let moveRow=fr-sr;
     let moveCol=fc-sc;
     let i, j;
@@ -219,7 +222,7 @@ function HandleBishop(sr, sc, fr, fc, player_turn){
     if(!flag) return false;
     return true;
 }
-function HandleQueen(sr, sc, fr, fc, player_turn){
+function HandleQueen(board, sr, sc, fr, fc, player_turn){
     let moveRow=fr-sr;
     let moveCol=fc-sc;
     let i, j;
@@ -305,7 +308,7 @@ function HandleQueen(sr, sc, fr, fc, player_turn){
     }
     return true;
 }
-function HandleKing(sr, sc, fr, fc, player_turn){
+function HandleKing(board, sr, sc, fr, fc, player_turn){
     let moveRow=fr-sr;
     let moveCol=fc-sc;
     let flag = false;
@@ -335,20 +338,20 @@ function CanMove(board, sr, sc, fr, fc, player_turn){
         return false;
     }
 
-    console.log(board[sr][sc]%6)
+
     switch(board[sr][sc]%6){
         case 0: // PAWN
-            return HandlePawn(sr, sc, fr, fc, player_turn);
+            return HandlePawn(board, sr, sc, fr, fc, player_turn);
         case 1: // ROOK
-            return HandleRook(sr, sc, fr, fc, player_turn);
+            return HandleRook(board, sr, sc, fr, fc, player_turn);
         case 2:
-            return HandleKnight(sr, sc, fr, fc, player_turn);
+            return HandleKnight(board, sr, sc, fr, fc, player_turn);
         case 3:
-            return HandleBishop(sr, sc, fr, fc, player_turn);
+            return HandleBishop(board, sr, sc, fr, fc, player_turn);
         case 4:
-            return HandleQueen(sr, sc, fr, fc, player_turn);
+            return HandleQueen(board, sr, sc, fr, fc, player_turn);
         case 5:
-            return HandleKing(sr, sc, fr, fc, player_turn);
+            return HandleKing(board, sr, sc, fr, fc, player_turn);
     }
 
     return false;
@@ -369,76 +372,82 @@ function MovePiece(board, sr, sc, fr, fc){
 
 
 function isFinish(){
-    let dir = [[-1, 1], [-1, 0], [-1, 1], 
-                [0, 1], [0, -1], 
-                [1, 1], [1, 0], [1, -1]];
-    let fin = false;
-    let krow, kcol;
+    for(let i=0; i<8; i++){
+        for(let j=0; j<8; j++){
+            // 상대방 말일 때 움직일 수 있는 거 다 움직여보고
+            // 그래도 체크라면 체크메이트
+            if(player_turn == 'white'){
+                if(getPieceColor(board[i][j]) == 'black'){
+                    let temp = getMoveablePosition(i, j, 'black');
+                    temp.forEach(element => {
+                        console.log(i, j, element[0], element[1]);
+                        let board_clone = board.clone();
+                        MovePiece(board_clone, i, j, element[0], element[1]);
+                        if(!isCheck(board_clone, 'black')){
+                                return false;
+                        }
+                    });
+                }
+            }
+            
+        }
+    }    
+    return true;
+}
+
+function isCheck(board, player_turn){
+    let kwr, kwc, kbr, kbc;
     for(let i=0; i<8; i++){
         for(let j=0; j<8; j++){
             if(board[i][j]%6 == 5){
-                if(getPieceColor(board[i][j]) == player_turn){
-                    krow=i;
-                    kcol=j;
+                if(getPieceColor(board[i][j]) == 'white'){
+                    kwr = i; kwc = j;
+                }
+                else{
+                    kbr = i; kbc = j;
+                }
+            }
+        }
+    }
+    // check if white king is being attacked
+    if(player_turn == 'white'){
+        for(let i=0; i<8; i++){
+            for(let j=0; j<8; j++){
+                if(CanMove(board, i, j, kwr, kwc, 'black')){
+                    return true;
                 }
             }
         }
     }
 
+    // check if black king is being attacked
+    else{
+        for(let i=0; i<8; i++){
+            for(let j=0; j<8; j++){
+                if(CanMove(board, i, j, kbr, kbc, 'white')){
+                    return true;
+                }
+            }
+        }
+    }
+    return false
+}
+
+function getMoveablePosition(r, c, player_turn){
+    can_pos = []
     for(let i=0; i<8; i++){
-        let newRow=krow+dir[i][0];
-        let newCol=kcol+dir[i][1];
-        if(CanMove(board, krow, kcol, newRow, newCol, player_turn)
-        && isCheck(board, krow, kcol, newRow, newCol)!=0){
-            flag = true;
-            break;
-        }
-    }
-    return flag;
-}
-function isCheck(sr, sc, fr, fc){
-    let flag = 2;
-    board_copy = board.clone();
-
-    let tmp = MovePiece(board_copy, sr, sc, fr, fc);
-    let kwr, kwc, kbr, kbc;
-    if(tmp%6 == 5) flag=3;
-    if(flag != 3){
-        // check king location
-        for(let i=0; i<8; i++){
-            for(let j=0; j<8; j++){
-                // check if piece is king
-                if(board_copy[i][j]%6 == 5){
-                    if(getPieceColor(board_copy[i][j]) == 'white'){
-                        kwr=i;
-                        kwc=j;
-                    }
-                    else{
-                        kbr=i;
-                        kbc=j;
-                    }
-                }
-            }
-        }
-        for(let i=0; i<8; i++){
-            for(let j=0; j<8; j++){
-                if(getPieceColor(board_copy[i][j]) == 'white' &&
-                   CanMove(board_copy, i, j, kbr, kbc, 'white')){
-                    if(player_turn=='white') flag = 1;
-                    else flag = 0;
-                }
-                if(getPieceColor(board_copy[i][j]) == 'black' &&
-                   CanMove(board_copy, i, j, kwr, kwc, 'black')){
-                    if(player_turn=='black') flag=1;
-                    else flag = 0;
+        for(let j=0; j<8; j++){
+            if(CanMove(board, r, c, i, j, player_turn) == true){
+                let board_clone = board.clone();
+                MovePiece(board_clone, r, c, i, j);
+                if(!isCheck(board_clone, player_turn)){
+                    can_pos.push([i, j]);
                 }
             }
         }
     }
-
-    return flag;
+    return can_pos;
 }
-
 
 function ChangeTurn(){
     if(player_turn == 'white'){
