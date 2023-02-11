@@ -12,8 +12,6 @@ const start_y = start_x;
 canvas.width = rect_width*8+start_x*2;
 canvas.height = rect_height*8+start_y*2;
 
-let black_time = 3000;
-let white_time = 3000;
 let can_move_position = [];
 let selected_piece_row = -1;
 let selected_piece_col = -1;
@@ -103,10 +101,10 @@ canvas.addEventListener('click', function(event){
         // 움직여라
         if(move_flag){
             // move piece
+            board_history.push(board.clone());
             var death = MovePiece(board, selected_piece_row, selected_piece_col, ridx, cidx);
             can_move_position = [];
-            
-            // time
+
             if(player_turn == 'white'){
                 white_time = white_time - Math.round((Date.now()-last_time)/1000);
                 last_time=Date.now();
@@ -125,7 +123,7 @@ canvas.addEventListener('click', function(event){
             }
 
             // check finish
-            if(isFinish()){
+            if(isFinish(player_turn) == true){
                 alert('checkmate');
             }
  

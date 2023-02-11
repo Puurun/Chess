@@ -4,8 +4,11 @@ let board = [];
 let board_copy;
 let white_death = [];
 let black_death = [];
+let board_history;
 let black_check;
 let white_check;
+let black_time;
+let white_time;
 
 Array.prototype.clone = function() {
     var arr = this.slice(0);
@@ -19,6 +22,7 @@ Array.prototype.clone = function() {
 }
 
 function InitBoard(){
+    board_history = [];
     black_time = 3000;
     white_time = 3000;
     black_check = false;
@@ -371,7 +375,8 @@ function MovePiece(board, sr, sc, fr, fc){
 }
 
 
-function isFinish(){
+function isFinish(player_turn){
+    let false_flag = false;
     for(let i=0; i<8; i++){
         for(let j=0; j<8; j++){
             // 상대방 말일 때 움직일 수 있는 거 다 움직여보고
@@ -380,17 +385,37 @@ function isFinish(){
                 if(getPieceColor(board[i][j]) == 'black'){
                     let temp = getMoveablePosition(i, j, 'black');
                     temp.forEach(element => {
-                        console.log(i, j, element[0], element[1]);
                         let board_clone = board.clone();
                         MovePiece(board_clone, i, j, element[0], element[1]);
-                        if(!isCheck(board_clone, 'black')){
-                                return false;
+                        if(isCheck(board_clone, 'black') == false){
+                            false_flag = true;
+                        }
+
+                    });
+                    if(false_flag == true){
+                        return false;
+                    }
+                }
+            }
+            else if(player_turn == 'black'){
+                if(getPieceColor(board[i][j]) == 'white'){
+                    console.log('qqq');
+                    let temp = getMoveablePosition(i, j, 'white');
+                    temp.forEach(element => {
+                        let board_clone = board.clone();
+                        MovePiece(board_clone, i, j, element[0], element[1]);
+                        if(isCheck(board_clone, 'white') == false){
+                            false_flag = true;
                         }
                     });
+                    
+                    if(false_flag == true){
+                        return false;
+                    }
                 }
             }
         }
-    }    
+    }
     return true;
 }
 
@@ -429,7 +454,7 @@ function isCheck(board, player_turn){
             }
         }
     }
-    return false
+    return false;
 }
 
 function getMoveablePosition(r, c, player_turn){
@@ -464,6 +489,25 @@ function ResetGame(){
     GameStart();
     InitBoard();
     onUpdate();
+}
+
+function UndoGame(){
+    if(board_history.length > 0){
+        board = board_history.pop().clone();
+        if(player_turn == 'white'){
+            white_time = white_time - Math.round((Date.now()-last_time)/1000);
+            last_time=Date.now();
+            document.getElementById("white_time").style.color = "#000000";
+        }
+        else{
+            black_time = black_time - Math.round((Date.now()-last_time)/1000);
+            last_time=Date.now();
+            document.getElementById("black_time").style.color = "#000000"
+        }
+        onUpdate();
+        ChangeTurn();
+        
+    }
 }
 InitBoard();
 GameStart();
