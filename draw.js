@@ -50,6 +50,7 @@ setInterval(()=>{
             useGrouping: false
           });
         document.getElementById("black_time").innerText = `${black_min}:${black_sec}`;
+        document.getElementById("black_time").style.color = "#F94A29";
     }
     else{
         let display_time = white_time - Math.round((cur_time-last_time)/1000);
@@ -62,6 +63,7 @@ setInterval(()=>{
             useGrouping: false
             });
         document.getElementById("white_time").innerText = `${white_min}:${white_sec}`;
+        document.getElementById("white_time").style.color = "#F94A29";
     }
 }, 100);
 
@@ -100,22 +102,29 @@ canvas.addEventListener('click', function(event){
         });
         // 움직여라
         if(move_flag){
+            // move piece
             var death = MovePiece(board, selected_piece_row, selected_piece_col, ridx, cidx);
             can_move_position = [];
+            
+            // time
             if(player_turn == 'white'){
                 white_time = white_time - Math.round((Date.now()-last_time)/1000);
                 last_time=Date.now();
+                document.getElementById("white_time").style.color = "#000000";
             }
             else{
                 black_time = black_time - Math.round((Date.now()-last_time)/1000);
                 last_time=Date.now();
+                document.getElementById("black_time").style.color = "#000000"
             }
 
+            // death list
             if(death != 0){
                 if(player_turn == 'white') black_death.push(death);
                 if(player_turn == 'black') white_death.push(death);
             }
 
+            // check finish
             if(isFinish()){
                 alert('checkmate');
             }
