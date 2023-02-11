@@ -3,11 +3,11 @@ const canvas = document.getElementById("game_canvas");
 
 const ctx = canvas.getContext("2d");
 
-const rect_height = window.innerHeight/11;
-const rect_width = rect_height;
+let rect_height = window.innerHeight/11;
+let rect_width = rect_height;
 
-const start_x = rect_height/5;
-const start_y = start_x;
+let start_x = rect_height/5;
+let start_y = start_x;
 
 canvas.width = rect_width*8+start_x*2;
 canvas.height = rect_height*8+start_y*2;
@@ -64,6 +64,19 @@ setInterval(()=>{
         document.getElementById("white_time").style.color = "#F94A29";
     }
 }, 100);
+
+// resize
+window.addEventListener('resize', function(event) {
+    rect_height = window.innerHeight/11;
+    rect_width = rect_height;
+
+    start_x = rect_height/5;
+    start_y = start_x;
+
+    canvas.width = rect_width*8+start_x*2;
+    canvas.height = rect_height*8+start_y*2;
+    onUpdate();
+}, true);
 
 canvas.addEventListener('click', function(event){
     let rect = canvas.getBoundingClientRect();
@@ -277,6 +290,7 @@ function InitDraw(){
 
 function DrawBoard() {
     // draw board
+    InitDraw();
     board.forEach((row, ridx) =>{
         row.forEach((val, cidx)=>{
             if((ridx+cidx)%2 == 1){
