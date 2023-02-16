@@ -371,6 +371,17 @@ function MovePiece(board, sr, sc, fr, fc){
     board[fr][fc] = board[sr][sc];
     board[sr][sc] = 0;
     
+    // related to logic after the move
+    // pawn
+    if(board[fr][fc]%6 == 0){
+        let check_row;
+
+        if(player_turn == 'white') check_row = 0;
+        else check_row = 7;
+
+        if(fr == check_row) Promotion(fr, fc);
+    }
+
     return deathCode;
 }
 
@@ -491,6 +502,7 @@ function ResetGame(){
     onUpdate();
 }
 
+// TODO: has to undo death list
 function UndoGame(){
     if(board_history.length > 0){
         board = board_history.pop().clone();
@@ -509,5 +521,10 @@ function UndoGame(){
         
     }
 }
+
+function Promotion(r, c){
+    
+}
+
 InitBoard();
 GameStart();
