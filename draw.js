@@ -289,7 +289,7 @@ function DrawChessPieces(val, cx, cy){
 function InitDraw(){
     ctx.beginPath();
     ctx.rect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = "#D0B8A8"
+    ctx.fillStyle = "#6E6E6E"
     ctx.fill();
     ctx.closePath();
 }
@@ -300,10 +300,10 @@ function DrawBoard() {
     board.forEach((row, ridx) =>{
         row.forEach((val, cidx)=>{
             if((ridx+cidx)%2 == 1){
-                ctx.fillStyle = "#85586F";
+                ctx.fillStyle = "#B9B7B6";
             }
             else{
-                ctx.fillStyle = "#f8ede3";
+                ctx.fillStyle = "#FFFFFF";
             }
             let cx = start_x+cidx*rect_width;
             let cy = start_y+ridx*rect_height;
