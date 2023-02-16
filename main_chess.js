@@ -9,6 +9,8 @@ let black_check;
 let white_check;
 let black_time;
 let white_time;
+let promotion_r;
+let promotion_c;
 
 Array.prototype.clone = function() {
     var arr = this.slice(0);
@@ -370,19 +372,25 @@ function MovePiece(board, sr, sc, fr, fc){
     }
     board[fr][fc] = board[sr][sc];
     board[sr][sc] = 0;
-    
+
+    return deathCode;
+}
+
+function AfterMove(fr, fc){
     // related to logic after the move
     // pawn
-    if(board[fr][fc]%6 == 0){
+    if(board[fr][fc] == 6 || board[fr][fc] == 12){
         let check_row;
 
         if(player_turn == 'white') check_row = 0;
         else check_row = 7;
 
-        if(fr == check_row) Promotion(fr, fc);
+        if(fr == check_row){
+            promotion_r = fr;
+            promotion_c = fc;
+            DrawPromotion(player_turn);
+        }
     }
-
-    return deathCode;
 }
 
 
@@ -410,7 +418,6 @@ function isFinish(player_turn){
             }
             else if(player_turn == 'black'){
                 if(getPieceColor(board[i][j]) == 'white'){
-                    console.log('qqq');
                     let temp = getMoveablePosition(i, j, 'white');
                     temp.forEach(element => {
                         let board_clone = board.clone();
@@ -522,8 +529,13 @@ function UndoGame(){
     }
 }
 
-function Promotion(r, c){
-    
+function Promotion(r, c, id){
+    console.log('hey');
+    board[r][c] = id;
+    promotion_flag = false;
+    document.getElementById('promotion').innerHTML = '';
+    onUpdate();
+
 }
 
 InitBoard();

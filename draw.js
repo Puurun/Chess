@@ -16,6 +16,7 @@ let can_move_position = [];
 let selected_piece_row = -1;
 let selected_piece_col = -1;
 let last_time = Date.now();
+let promotion_flag = false;
 
 let black_min = Math.floor(black_time/60).toLocaleString(undefined, {
     minimumIntegerDigits: 2,
@@ -79,6 +80,10 @@ window.addEventListener('resize', function(event) {
 }, true);
 
 canvas.addEventListener('click', function(event){
+    if(promotion_flag == true){
+        return;
+    }
+
     let rect = canvas.getBoundingClientRect();
     let mouse_x = event.clientX - rect.left;
     let mouse_y = event.clientY - rect.top;
@@ -116,6 +121,7 @@ canvas.addEventListener('click', function(event){
             // move piece
             board_history.push(board.clone());
             var death = MovePiece(board, selected_piece_row, selected_piece_col, ridx, cidx);
+            AfterMove(ridx, cidx);
             can_move_position = [];
 
             if(player_turn == 'white'){
@@ -327,6 +333,26 @@ function DrawBoard() {
     }
     
 }
+
+function DrawPromotion(player_turn){
+    let elem = '';
+    if(player_turn == 'black'){
+        elem += '<button onclick="Promotion(promotion_r, promotion_c, 1)" class="button-74"><img src="img/rook_b.png" class="promotion_img"></button>\n';
+        elem += '<button onclick="Promotion(promotion_r, promotion_c, 2)" class="button-74"><img src="img/knight_b.png" class="promotion_img"></button>\n';
+        elem += '<button onclick="Promotion(promotion_r, promotion_c, 3)" class="button-74"><img src="img/bishop_b.png" class="promotion_img"></button>\n';
+        elem += '<button onclick="Promotion(promotion_r, promotion_c, 4)" class="button-74"><img src="img/queen_b.png" class="promotion_img"></button>\n'; 
+    }
+    else{
+        elem += '<button onclick="Promotion(promotion_r, promotion_c, 7)" class="button-74"><img src="img/rook_w.png" class="promotion_img"></button>\n';
+        elem += '<button onclick="Promotion(promotion_r, promotion_c, 8)" class="button-74"><img src="img/knight_w.png" class="promotion_img"></button>\n';
+        elem += '<button onclick="Promotion(promotion_r, promotion_c, 9)" class="button-74"><img src="img/bishop_w.png" class="promotion_img"></button>\n';
+        elem += '<button onclick="Promotion(promotion_r, promotion_c, 10)" class="button-74"><img src="img/queen_w.png" class="promotion_img"></button>\n';
+    }
+    document.getElementById('promotion').innerHTML = elem;
+    console.log(elem);
+    promotion_flag = true;
+}
+
 // 시간, 누구 턴인지, 
 InitDraw();
 
