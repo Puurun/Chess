@@ -120,7 +120,7 @@ canvas.addEventListener('click', function(event){
         if(move_flag){
             // move piece
             board_history.push(board.clone());
-            var death = MovePiece(board, selected_piece_row, selected_piece_col, ridx, cidx);
+            var death = MovePiece(board, selected_piece_row, selected_piece_col, ridx, cidx,true);
             AfterMove(ridx, cidx);
             can_move_position = [];
 

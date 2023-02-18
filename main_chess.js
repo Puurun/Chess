@@ -11,6 +11,9 @@ let black_time;
 let white_time;
 let promotion_r;
 let promotion_c;
+let castling_check= [];
+let last_move = [];
+let en_passant_flag;
 
 Array.prototype.clone = function() {
     var arr = this.slice(0);
@@ -74,6 +77,10 @@ function InitBoard(){
     }
     white_death = [];
     black_death = [];
+    last_move[0]=-1;
+    last_move[1]=-1;
+    last_move[2]=-1;
+    en_passant_flag=false;
 }
 
 function getPieceColor(piece){
@@ -365,15 +372,32 @@ function CanMove(board, sr, sc, fr, fc, player_turn){
 }
 
 // moves piece, and returns death piece code if dead
-function MovePiece(board, sr, sc, fr, fc){
+function MovePiece(board, sr, sc, fr, fc,option){
     let deathCode = 0;
-
+    if(en_passant_flag){
+        if(board[sr][sc]%6==0&&Math.abs(sc-fc)==1&&board[fr][fc]==0){
+            if(player_turn=='black'){
+                board[last_move[2]+1][last_move[3]]=board[last_move[2]][last_move[3]];
+                board[last_move[2]][last_move[3]]=0;
+            }
+            if(player_turn=='white'){
+                board[last_move[2]-1][last_move[3]]=board[last_move[2]][last_move[3]];
+                board[last_move[2]][last_move[3]]=0;
+            }
+        }
+    }
     if(getPieceColor(board[fr][fc]) != 0){
         deathCode = board[fr][fc];
     }
     board[fr][fc] = board[sr][sc];
     board[sr][sc] = 0;
-
+    if(option){
+        last_move[0]=sr;
+        last_move[1]=sc;
+        last_move[2]=fr;
+        last_move[3]=fc;
+        last_move[4]=board[fr][fc];
+    }
     return deathCode;
 }
 
@@ -406,7 +430,7 @@ function isFinish(player_turn){
                     let temp = getMoveablePosition(i, j, 'black');
                     temp.forEach(element => {
                         let board_clone = board.clone();
-                        MovePiece(board_clone, i, j, element[0], element[1]);
+                        MovePiece(board_clone, i, j, element[0], element[1],false);
                         if(isCheck(board_clone, 'black') == false){
                             false_flag = true;
                         }
@@ -422,7 +446,7 @@ function isFinish(player_turn){
                     let temp = getMoveablePosition(i, j, 'white');
                     temp.forEach(element => {
                         let board_clone = board.clone();
-                        MovePiece(board_clone, i, j, element[0], element[1]);
+                        MovePiece(board_clone, i, j, element[0], element[1],false);
                         if(isCheck(board_clone, 'white') == false){
                             false_flag = true;
                         }
@@ -482,12 +506,16 @@ function getMoveablePosition(r, c, player_turn){
         for(let j=0; j<8; j++){
             if(CanMove(board, r, c, i, j, player_turn) == true){
                 let board_clone = board.clone();
-                MovePiece(board_clone, r, c, i, j);
+                MovePiece(board_clone, r, c, i, j,false);
                 if(!isCheck(board_clone, player_turn)){
                     can_pos.push([i, j]);
                 }
             }
         }
+    }
+    let tmp=En_passant(r,c,player_turn);
+    if(en_passant_flag){
+        can_pos.push(tmp.pop());
     }
     return can_pos;
 }
@@ -537,6 +565,36 @@ function Promotion(r, c, id){
     document.getElementById('promotion').innerHTML = '';
     onUpdate();
 
+}
+
+function Castling(){
+
+}
+
+function En_passant(last_row,last_col,player_turn){
+    can_enpassant= []
+    if(player_turn=='white'){
+        if(last_move[0]==1&&last_move[2]==3&&last_move[4]%6==0){
+            if(last_row==3&&Math.abs(last_col-last_move[3])==1){
+                en_passant_flag=true;
+                can_enpassant.push([last_row-1,last_move[3]]);
+                return can_enpassant;
+                //앙파상 조건 충족 [r-1][last_move[3]]으로 이동 가능
+            }
+        }
+    }
+    if(player_turn=='black'){
+        if(last_move[0]==6&&last_move[2]==4&&last_move[4]%6==0){
+            if(last_row==4&&Math.abs(last_col-last_move[3])==1){
+                en_passant_flag=true;
+                can_enpassant.push([last_row+1,last_move[3]]);
+                return can_enpassant;
+                //앙파상 조건 충족 [r+1][last_move[3]]으로 이동 가능
+            }
+        }
+    }
+    en_passant_flag=false;
+    return can_enpassant;
 }
 
 InitBoard();
