@@ -675,7 +675,7 @@ function En_passant(last_row,last_col,player_turn){
                 en_passant_flag=true;
                 can_enpassant.push([last_row-1,last_move[3]]);
                 return can_enpassant;
-                //앙파상 조건 충족 [r-1][last_move[3]]으로 이동 가능
+                //satisfiy condition, can move [r-1][last_move[3]]
             }
         }
     }
@@ -685,7 +685,7 @@ function En_passant(last_row,last_col,player_turn){
                 en_passant_flag=true;
                 can_enpassant.push([last_row+1,last_move[3]]);
                 return can_enpassant;
-                //앙파상 조건 충족 [r+1][last_move[3]]으로 이동 가능
+                //satisfiy condition, can move [r+1][last_move[3]]
             }
         }
     }
