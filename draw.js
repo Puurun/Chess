@@ -101,7 +101,7 @@ canvas.addEventListener('click', function(event){
         selected_piece_row = ridx;
         selected_piece_col = cidx;
         let checking;
-        can_move_position = getMoveablePosition(ridx, cidx, player_turn);
+        can_move_position = getMoveablePosition(board,ridx, cidx, player_turn);
 
         if(checking==1&&isFinish()){
             alert("CheckMate");

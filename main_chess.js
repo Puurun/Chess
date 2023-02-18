@@ -12,6 +12,7 @@ let white_time;
 let promotion_r;
 let promotion_c;
 let castling_check= [];
+let castling_flag;
 let last_move = [];
 let en_passant_flag;
 
@@ -77,10 +78,14 @@ function InitBoard(){
     }
     white_death = [];
     black_death = [];
-    last_move[0]=-1;
-    last_move[1]=-1;
-    last_move[2]=-1;
+    for(let i=0;i<=4;i++){
+        last_move[i]=0;
+    }
+    for(let i=0;i<=5;i++){
+        castling_check[i]=false;
+    }
     en_passant_flag=false;
+    castling_flag=false;
 }
 
 function getPieceColor(piece){
@@ -386,6 +391,24 @@ function MovePiece(board, sr, sc, fr, fc,option){
             }
         }
     }
+    if(castling_flag){
+        if(sr==0&&sc==4&&fr==0&&fc==1){
+            board[0][2]=board[0][0];
+            board[0][0]=0;
+        }
+        if(sr==0&&sc==4&&fr==0&&fc==6){
+            board[0][5]=board[0][7];
+            board[0][7]=0;
+        }
+        if(sr==7&&sc==4&&fr==7&&fc==1){
+            board[7][2]=board[7][0];
+            board[7][0]=0;
+        }
+        if(sr==7&&sc==4&&fr==7&&fc==6){
+            board[7][5]=board[7][7];
+            board[7][7]=0;
+        }
+    }
     if(getPieceColor(board[fr][fc]) != 0){
         deathCode = board[fr][fc];
     }
@@ -397,7 +420,14 @@ function MovePiece(board, sr, sc, fr, fc,option){
         last_move[2]=fr;
         last_move[3]=fc;
         last_move[4]=board[fr][fc];
+        if(sr==0&&sc==0) castling_check[0]=true;//black left rook
+        else if(sr==0&&sc==4) castling_check[1]=true;//black king
+        else if(sr==0&&sc==7) castling_check[2]=true;//black right rook
+        else if(sr==7&&sc==0) castling_check[3]=true;//white left rook
+        else if(sr==7&&sc==4) castling_check[4]=true;//white king
+        else if(sr==7&&sc==7) castling_check[5]=true;//white right rook
     }
+
     return deathCode;
 }
 
@@ -427,7 +457,7 @@ function isFinish(player_turn){
             // 그래도 체크라면 체크메이트
             if(player_turn == 'white'){
                 if(getPieceColor(board[i][j]) == 'black'){
-                    let temp = getMoveablePosition(i, j, 'black');
+                    let temp = getMoveablePosition(board,i, j, 'black');
                     temp.forEach(element => {
                         let board_clone = board.clone();
                         MovePiece(board_clone, i, j, element[0], element[1],false);
@@ -443,7 +473,7 @@ function isFinish(player_turn){
             }
             else if(player_turn == 'black'){
                 if(getPieceColor(board[i][j]) == 'white'){
-                    let temp = getMoveablePosition(i, j, 'white');
+                    let temp = getMoveablePosition(board,i, j, 'white');
                     temp.forEach(element => {
                         let board_clone = board.clone();
                         MovePiece(board_clone, i, j, element[0], element[1],false);
@@ -500,7 +530,7 @@ function isCheck(board, player_turn){
     return false;
 }
 
-function getMoveablePosition(r, c, player_turn){
+function getMoveablePosition(board,r, c, player_turn){
     can_pos = []
     for(let i=0; i<8; i++){
         for(let j=0; j<8; j++){
@@ -513,9 +543,15 @@ function getMoveablePosition(r, c, player_turn){
             }
         }
     }
-    let tmp=En_passant(r,c,player_turn);
+    let En_passant_tmp=En_passant(r,c,player_turn);
     if(en_passant_flag){
-        can_pos.push(tmp.pop());
+        can_pos.push(En_passant_tmp.pop());
+    }
+    let Castling_tmp=Castling(board,r,c,player_turn);
+    if(castling_flag){
+        for(let i=0;i<Castling_tmp.length;i++){
+            can_pos.push(Castling_tmp.pop());
+        }
     }
     return can_pos;
 }
@@ -567,8 +603,68 @@ function Promotion(r, c, id){
 
 }
 
-function Castling(){
+function Castling(board,r,c,player_turn){
+    can_castling=[]
+    if(player_turn=='white'){
+        if(r==7&&c==4&&castling_check[4]==false){
+            if(castling_check[3]==false){
+                if(forCastling(board,7,3)&&forCastling(board,7,2)&&forCastling(board,7,1)){
+                    can_castling.push([7,1]);
+                }
+            }
+            if(castling_check[5]==false){
+                if(forCastling(board,7,5)&&forCastling(board,7,6)){
+                    can_castling.push([7,6]);
+                }
+            }
+        }
+    }
+    if(player_turn=='black'){
+        if(r==0&&c==4&&castling_check[1]==false){
+            if(castling_check[0]==false){
+                if(forCastling(board,0,1)&&forCastling(board,0,2)&&forCastling(board,0,3)){
+                    can_castling.push([0,1]);
+                }
+            }
+            if(castling_check[2]==false){
+                if(forCastling(board,0,5)&&forCastling(board,0,6)){
+                    can_castling.push([0,6]);
+                }
+            }
+        }
+    }
+    if(can_castling.length==0){
+        castling_flag=false;
+    }else{
+        castling_flag=true;
+    }
+    return can_castling;
+}
 
+function forCastling(board,row, col){
+    let krow,kcol,kingID;
+    if(board[row][col]!=0) {
+        return false;
+    }
+    if(player_turn=='white'){
+        krow=7;
+        kcol=4;
+    }
+    else{
+        krow=0;
+        kcol=4;
+    }
+    board[row][col]=board[krow][kcol];
+    kingID=board[krow][kcol];
+    board[krow][kcol]=0;
+    if(isCheck(board,player_turn)){
+        board[row][col]=0;
+        board[krow][kcol]=kingID;
+        return false;
+    }
+    board[row][col]=0;
+    board[krow][kcol]=kingID;
+    return true;
 }
 
 function En_passant(last_row,last_col,player_turn){
